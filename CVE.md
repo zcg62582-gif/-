@@ -40,7 +40,7 @@ pause
 
 - 将png后面的123皆改为空格（ASCII 编码中0x31-0x33对应1,2,3，空格为0x20）
 
-![](https://s3.bmp.ovh/imgs/2025/12/08/b8112286e321e234.png)
+![](https://s3.bmp.ovh/imgs/2025/12/09/4d1f723a106ea41b.png)
 
 ### 3.改名为.rar发给安有低版本winrar的win10虚拟机
 
@@ -50,7 +50,7 @@ pause
 ### 4.双击文件pure.png
 
 弹出calc.exe窗口并启动计算机：
-![alt text](36b3e71b249d8ae5834762c5ad8afbae.png)
+![](https://s3.bmp.ovh/imgs/2025/12/09/c9489768667601e2.png)
 
 ## 漏洞原理(以png文件为例)：
 
@@ -88,7 +88,8 @@ WinRAR 接收到用户双击 pure.png 的指令后，会遍历 ZIP 包内的所�
 - 恶意内容释放：根据 WinRAR 的设计，匹配到的条目内容会被释放到临时目录。因此，它不仅释放了诱饵图片文件 pure.png，也错误地将同名文件夹 pure.png 内的所有内容（即恶意脚本 pure.png .cmd）释放到了同一临时目录。这是整个漏洞链条的第一个关键点：恶意脚本被“偷渡”到了执行环境。
 
 **2.ShellExecute 的扩展名解析歧义:**
-![alt text](image-9.png)
+![](https://s3.bmp.ovh/imgs/2025/12/09/e503b2de97892cbf.png)
+
 文件释放后，WinRAR 会调用 ShellExecuteExW API 来“打开”用户点击的 pure.png。
 - 正常流程：ShellExecute 应调用 PathFindExtension 函数，从文件完整路径（如 C:\Temp\...\pure.png）中正确提取扩展名 .png，然后查询注册表找到关联的图片查看器并启动。
 - 漏洞触发点：由于之前错误的释放逻辑，传递给 ShellExecute 的文件路径实际上是 C:\Temp\...\pure.png（路径末尾包含一个空格）。
@@ -152,7 +153,6 @@ ________________________________________
 
 ### 1. 官方补丁升级
 - 立即升级至 WinRAR 6.23 或更新版本，该版本修复了路径验证逻辑。
-[Chromium](https://www.chromium.org/) 官方补丁：https://chromium.googlesource.com/chromium/src/+/refs/tags/116.0.5845.96/CHANGELOG.md#116.0.5845.96
 
 ### 2.安全增强建议
 - 禁用 WinRAR 临时文件执行：组策略中禁止解压目录的程序执行权限（通过路径规则限制 %Temp% 的 .cmd、.bat 运行）。
